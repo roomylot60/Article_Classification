@@ -1,17 +1,29 @@
+### db.py (MySQL 데이터베이스 연결)
 import mysql.connector
-from mysql.connector import Error
 
 def get_db_connection():
-    try:
-        connection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="qwer1234",
-            database="article_db"
-        )
-        if connection.is_connected():
-            print("✅ MySQL 연결 성공")
-            return connection
-    except Error as e:
-        print(f"❌ MySQL 연결 오류: {e}")
-        return None
+    return mysql.connector.connect(
+        host="localhost", user="root", password="qwer1234", database="article_db"
+    )
+
+def save_article(section, title, content, url, summary, sentiment):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    query = """
+        INSERT INTO articles (section, title, content, url, summary, sentiment) 
+        VALUES (%s, %s, %s, %s, %s, %s)
+    """
+    cursor.execute(query, (section, title, content, url, summary, sentiment))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def get_articles(section=None):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = "SELECT * FROM articles" if not section else "SELECT * FROM articles WHERE section = %s"
+    cursor.execute(query, (section,) if section else ())
+    articles = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return articles

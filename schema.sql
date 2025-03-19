@@ -5,11 +5,12 @@ USE article_db;
 -- 기사 테이블 생성
 CREATE TABLE IF NOT EXISTS articles (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    section VARCHAR(50),
+    section VARCHAR(50) NOT NULL,
+    title VARCHAR(255),
     url VARCHAR(500) UNIQUE,  -- ✅ 중복 방지를 위해 UNIQUE 설정
-    title TEXT,
+    content TEXT,
     summary TEXT,
-    sentiment VARCHAR(10),
+    sentiment VARCHAR(50),
     sentiment_score FLOAT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
