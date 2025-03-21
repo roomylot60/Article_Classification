@@ -32,12 +32,13 @@ if search_results:
     if selected_article_ids:
         if st.button("📖 상세 내용 보기"):
             st.session_state["selected_article_ids"] = selected_article_ids  # ✅ 세션에 저장
-            st.experimental_set_query_params(page="detail")  # ✅ URL 변경
+            st.query_params.update({"page": "detail"})  # ✅ st.experimental_set_query_params는 2024-04-11 이후 제거 변경
             st.rerun()
 
     # ✅ 기사 저장 기능 유지
     if selected_article_ids:
         if st.button("📝 선택한 기사 저장"):
+            stored_ids = []
             for article_id in selected_article_ids:
                 # `search_results`에서 선택된 ID에 해당하는 기사를 찾아 저장
                 article = search_results[article_id - 1]
@@ -52,10 +53,15 @@ if search_results:
                 }
                 response = requests.post(f"{FASTAPI_URL}/save_article", json=save_data)
                 
-                if response.status_code == 200:
-                    st.success(f"✅ 기사 저장 완료: {article['제목']}")
+                if response.status_code == 200 and "id" in response.json():
+                    saved_id = response.json()["id"]
+                    stored_ids.append(saved_id)
+                    st.success(f"✅ 기사 저장 완료: {article['제목']}  (ID: {saved_id})")
                 else:
                     st.error(f"❌ 저장 실패: {article['제목']}")
+            # 저장한 기사 ID들을 세션에 저장하여 detail.py에서 사용 가능하도록
+            if stored_ids:
+                st.session_state["selected_article_ids"] = stored_ids
     else:
         st.warning("⚠ 저장할 기사를 선택하세요.")
 

@@ -41,9 +41,18 @@ class Article(BaseModel):
 @app.post("/save_article")
 def save_article(article: Article):
     connection = get_db_connection()
-    cursor = connection.cursor()
+    cursor = connection.cursor(dictionary=True)
 
     try:
+        # ✅ URL 중복 여부 확인
+        cursor.execute("SELECT id FROM articles WHERE url = %s", (article.url,))
+        existing = cursor.fetchone()
+
+        if existing:
+            print(f"⚠️ 이미 저장된 기사입니다: ID={existing['id']}")
+            return {"message": "이미 저장된 기사입니다.", "id": existing["id"]}
+
+        # ✅ 새로운 기사 삽입
         query = """
             INSERT INTO articles (section, title, url, content, summary, sentiment, sentiment_score, created_at)
             VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())
@@ -58,16 +67,16 @@ def save_article(article: Article):
             article.sentiment_score
         )
 
-        print("🟢 [DEBUG] SQL Query:", query)
-        print("🟢 [DEBUG] Values:", values)
-
+        print("🟢 [DEBUG] SQL 실행:", values)
         cursor.execute(query, values)
         connection.commit()
-        
-        return {"message": "기사 저장 완료"}
+
+        inserted_id = cursor.lastrowid
+        print("✅ 저장 성공! ID:", inserted_id)
+        return {"message": "기사 저장 완료", "id": inserted_id}
 
     except Exception as e:
-        print("🔴 [ERROR] MySQL 저장 중 오류 발생:", str(e))  # 🔹 로그 출력
+        print("🔴 [ERROR] MySQL 저장 중 오류 발생:", str(e))
         raise HTTPException(status_code=500, detail=f"MySQL 오류: {str(e)}")
 
     finally:
@@ -102,11 +111,13 @@ def get_article_detail(article_id: int):
         cursor.execute("SELECT * FROM articles WHERE id = %s", (article_id,))
         article = cursor.fetchone()
         if article:
+            print("🟢 상세 조회 성공:", article)  # ✅ 로그 추가
             return article
         else:
             raise HTTPException(status_code=404, detail="해당 기사를 찾을 수 없습니다.")
 
     except Exception as e:
+        print("🔴 DB 조회 중 오류:", str(e))  # ✅ 로그로 에러 확인
         raise HTTPException(status_code=500, detail=str(e))
 
     finally:

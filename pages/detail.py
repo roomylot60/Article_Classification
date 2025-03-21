@@ -12,6 +12,9 @@ selected_article_ids = st.session_state.get("selected_article_ids", [])
 if selected_article_ids:
     for article_id in selected_article_ids:
         # ✅ FastAPI에서 기사 상세 정보 가져오기
+        if article_id is None:
+            st.error("❌ 유효하지 않은 기사 ID (None)")
+            continue
         response = requests.get(f"{FASTAPI_URL}/article/{article_id}")
 
         if response.status_code == 200:
@@ -20,6 +23,7 @@ if selected_article_ids:
             st.subheader(article.get("title", "제목 없음"))
             st.write(f"🗂️ **섹션:** {article.get('section', '알 수 없음')}")
             st.write(f"📅 **작성일:** {article.get('created_at', '알 수 없음')}")
+            st.markdown(f"🔗 [기사 링크]({article.get('url', '#')})")
             st.write("---")
             st.write(f"📝 **본문:**\n\n{article.get('content', '본문 없음')}")
             st.write("---")

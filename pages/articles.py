@@ -45,7 +45,7 @@ if response.status_code == 200:
             if selected_article_ids:
                 if st.button("📖 상세 내용 보기"):
                     st.session_state["selected_article_ids"] = selected_article_ids  # ✅ 세션에 저장
-                    st.experimental_set_query_params(page="detail")  # ✅ URL 변경
+                    st.query_params.update({"page": "detail"})  # ✅ st.experimental_set_query_params는 2024-04-11 이후 제거 변경
                     st.rerun()
 
             # ✅ "선택한 기사 삭제" 버튼 추가
