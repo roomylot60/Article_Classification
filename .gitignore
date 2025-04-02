@@ -193,3 +193,5 @@ sketch
 *.txt
 README.md
 ref/
+results/
+*.safetensors
