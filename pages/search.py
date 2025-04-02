@@ -8,12 +8,12 @@ st.title("🔎 뉴스 검색")
 
 # ✅ 섹션 및 검색 개수 입력
 section = st.selectbox("검색할 뉴스 섹션을 선택하세요", ["정치", "경제", "사회", "생활", "세계", "IT"])
-n_articles = st.number_input("검색할 기사 개수", min_value=1, max_value=20, value=5)
+n_articles = st.number_input("검색할 기사 개수", min_value=1, max_value=200, value=10)
 
 if st.button("검색 실행"):
     api_url = f"{FASTAPI_URL}/analyze_section/"
     try:
-        response = requests.get(api_url, params={"section": section, "count": n_articles}, timeout=10)
+        response = requests.get(api_url, params={"section": section, "count": n_articles}, timeout=800)
         if response.status_code == 200:
             search_results = response.json()
             
