@@ -1,0 +1,16 @@
+[Unit]
+Description=Article Scraper Service
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=patrick
+WorkingDirectory=/home/patrick/PJ/Article_Classification
+ExecStart=/usr/bin/python3 /home/patrick/PJ/Article_Classification/article_scraper_service.py
+Restart=always
+RestartSec=60
+StandardOutput=append:/home/patrick/PJ/Article_Classification/scraper.log
+StandardError=append:/home/patrick/PJ/Article_Classification/scraper.log
+
+[Install]
+WantedBy=multi-user.target 
