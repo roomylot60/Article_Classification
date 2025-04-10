@@ -4,14 +4,15 @@ import requests
 
 FASTAPI_URL = "http://127.0.0.1:9000"
 
+# 페이지 제목
 st.title("📖 기사 상세 내용")
 
-# ✅ URL에서 선택된 기사 ID 가져오기
+# URL에서 선택된 기사 ID 가져오기
 selected_article_ids = st.session_state.get("selected_article_ids", [])
 
 if selected_article_ids:
     for article_id in selected_article_ids:
-        # ✅ FastAPI에서 기사 상세 정보 가져오기
+        # FastAPI에서 기사 상세 정보 가져오기
         if article_id is None:
             st.error("❌ 유효하지 않은 기사 ID (None)")
             continue
@@ -36,3 +37,6 @@ if selected_article_ids:
 
 else:
     st.warning("⚠ 기사 ID가 없습니다. 먼저 [기사 목록](?page=articles)에서 기사를 선택하세요.")
+
+# 기사 목록으로 돌아가기
+st.markdown('<a href="/articles" target="_self">🔙 기사 목록으로 돌아가기</a>', unsafe_allow_html=True)

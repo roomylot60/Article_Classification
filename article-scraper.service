@@ -1,6 +1,7 @@
 [Unit]
 Description=Article Scraper Service
 After=network.target mysql.service
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple
@@ -11,6 +12,8 @@ Restart=always
 RestartSec=60
 StandardOutput=append:/home/patrick/PJ/Article_Classification/scraper.log
 StandardError=append:/home/patrick/PJ/Article_Classification/scraper.log
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=/home/patrick/PJ/Article_Classification
 
 [Install]
 WantedBy=multi-user.target 

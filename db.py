@@ -6,14 +6,14 @@ def get_db_connection():
         host="localhost", user="root", password="qwer1234", database="article_db"
     )
 
-def save_article(section, title, content, url, summary, sentiment):
+def save_article(section, title, content, url, summary, sentiment, sentiment_score):
     conn = get_db_connection()
     cursor = conn.cursor()
     query = """
-        INSERT INTO articles (section, title, content, url, summary, sentiment) 
-        VALUES (%s, %s, %s, %s, %s, %s)
+        INSERT INTO articles (section, title, content, url, summary, sentiment, sentiment_score) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
-    cursor.execute(query, (section, title, content, url, summary, sentiment))
+    cursor.execute(query, (section, title, content, url, summary, sentiment, sentiment_score))
     conn.commit()
     cursor.close()
     conn.close()
